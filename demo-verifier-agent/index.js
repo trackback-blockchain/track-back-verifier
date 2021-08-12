@@ -218,13 +218,15 @@ app.post('/', async (rq, res) => {
 
             console.log(assetionMethodPublicKeymultibase);
 
-            // const decoder = new TextDecoder();
-            // const jws = vc_proof_value;
-            // const { payload, protectedHeader } = await compactVerify(jws, publicKey)
+            const decoder = new TextDecoder();
+            const jws = vc_proof_value;
+            const { payload, protectedHeader } =  compactVerify(jws, assetionMethodPublicKeymultibase);
 
-            // console.log(protectedHeader)
-            // console.log(decoder.decode(payload))
+            console.log(protectedHeader)
+            console.log(decoder.decode(payload))
 
+            status = 200
+            message = {}
                 
 
         }
