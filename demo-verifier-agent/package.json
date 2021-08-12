@@ -1,0 +1,24 @@
+{
+  "name": "demo-verifier-agent",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@polkadot/api": "^5.4.1",
+    "express": "^4.17.1",
+    "jose": "^3.14.3",
+    "jsonld-context-parser": "^2.1.4",
+    "polkadot/api": "^5.0.1",
+    "polkadot/ui-keyring": "^0.84.1",
+    "polkadot/util-crypto": "^7.0.1",
+    "swagger-ui-express": "^4.1.6",
+    "web3": "^1.5.1"
+  }
+}
