@@ -4,7 +4,7 @@ const { compactVerify } = require('jose/jws/compact/verify')
 
 
 const app = express();
-const port = process.env.PORT || 3500;
+const port = process.env.PORT || 80;
 
 
 
@@ -144,7 +144,7 @@ app.get('/',  async (rq, res)=> {
 
 });
 
-app.post('/', async (rq, res) => {
+app.post('/api/v1/vcp', async (rq, res) => {
 
     let vc = rq.body.vcp;
 
