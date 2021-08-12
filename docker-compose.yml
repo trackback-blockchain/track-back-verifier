@@ -1,0 +1,17 @@
+version: '3.0'
+services: 
+  api:
+    image: 533545012068.dkr.ecr.ap-southeast-2.amazonaws.com/demo-verifier-agent:latest 
+    environment: 
+      PORT: 80
+  verifier:
+    image: 533545012068.dkr.ecr.ap-southeast-2.amazonaws.com/demo-verifier:latest 
+    environment: 
+      PORT: 80
+  nginx:
+    image: 533545012068.dkr.ecr.ap-southeast-2.amazonaws.com/demo-verifier-nginx:latest
+    ports:
+      - 80:80
+    depends_on:
+      - verifier
+      - api
