@@ -1,7 +1,7 @@
 const express = require('express');
 const { ApiPromise, WsProvider } = require('@polkadot/api');
 const { compactVerify } = require('jose/jws/compact/verify')
-
+const { Buffer } = require('buffer');
 
 const app = express();
 const port = process.env.PORT || 80;
@@ -214,19 +214,34 @@ app.post('/api/v1/vcp', async (rq, res) => {
             console.log(str)
 
             didJSON = JSON.parse(str);
-            let assetionMethodPublicKeymultibase = didJSON["assertionMethod"][0]["publicKeyMultibase"];
+            let pk = didJSON["assertionMethod"][0]["publicKeyMultibase"];
 
-            console.log(assetionMethodPublicKeymultibase);
+            console.log(pk);
 
-            const decoder = new TextDecoder();
-            const jws = vc_proof_value;
-            const { payload, protectedHeader } =  compactVerify(jws, assetionMethodPublicKeymultibase);
 
-            console.log(protectedHeader)
-            console.log(decoder.decode(payload))
+            let buff = Buffer.from(pk);
+            const arr = new Uint8Array(buff);
+            
+            console.log(arr);
 
-            status = 200
-            message = {}
+            (async() => {
+                const decoder = new TextDecoder();
+                const jws = vc_proof_value;
+                const { payload, protectedHeader } = await compactVerify(jws, arr);
+    
+                console.log(protectedHeader)
+                console.log(decoder.decode(payload))
+              })();
+
+            // const decoder = new TextDecoder();
+            // const jws = vc_proof_value;
+            // const { payload, protectedHeader } = await compactVerify(jws, assetionMethodPublicKeymultibase);
+
+            // console.log(protectedHeader)
+            // console.log(decoder.decode(payload))
+
+            status = 200;
+            message = {"verification": true};
                 
 
         }
