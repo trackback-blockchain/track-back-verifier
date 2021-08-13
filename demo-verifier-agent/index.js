@@ -1,18 +1,51 @@
 const express = require('express');
 const { ApiPromise, WsProvider } = require('@polkadot/api');
-const { compactVerify } = require('jose/jws/compact/verify')
+
 const { Buffer } = require('buffer');
+const { createPublicKey } = require('crypto');
+const { compactVerify } = require('jose/jws/compact/verify')
+
 
 const app = express();
 const port = process.env.PORT || 80;
 
-
-
-
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
-app.get('/',  async (rq, res)=> {
+const convert = (from, to) => str => Buffer.from(str, from).toString(to);
+const hexToUtf8 = convert('hex', 'utf8');
+
+const vcpsReceived = [];
+
+async function verify(jws, publicKeyHex, payloadToVerify) {
+
+    const publicKey = createPublicKey({
+        'key': `-----BEGIN PUBLIC KEY-----\n${publicKeyHex}\n-----END PUBLIC KEY-----`,
+        'format': 'pem',
+        'type': 'spki',
+    });
+
+    const decoder = new TextDecoder()
+
+    const { payload, protectedHeader } = await compactVerify(jws, publicKey)
+
+    return (decoder.decode(payload) === payloadToVerify)
+
+}
+
+async function vcpVerfy(vcp) {
+    const { proof, ...rest } = vcp;
+
+    const result = await verify(
+        vcp.proof.proofValue,
+        vcp.proof.verificationMethod.split("#")[1],
+        JSON.stringify({ ...rest })
+    );
+
+    return result;
+}
+
+app.get('/', async (rq, res) => {
 
     // *****************************************************************************************************
     // Dummuy VC 
@@ -67,7 +100,7 @@ app.get('/',  async (rq, res)=> {
         }
     };
 
-    let vc_proof =  vc["verifiableCredential"][0]["proof"]; // VC proof not the VPC proof
+    let vc_proof = vc["verifiableCredential"][0]["proof"]; // VC proof not the VPC proof
     let vc_proof_value = vc_proof["proofValue"]; // JWS
     let verification_method = vc_proof["verificationMethod"].split(":")[2]; // DID URI
     // *****************************************************************************************************
@@ -110,29 +143,29 @@ app.get('/',  async (rq, res)=> {
     // didJSON = {}
     api.query.didModule.dIDDocument(hash, (result) => {
         let didJSON = {};
-        if (!result.isEmpty){
+        if (!result.isEmpty) {
             let res = JSON.parse(result.toString());
-            
+
             let owner = res["sender_account_id"].toString();
             let block_number = res["block_number"];
             did_document = res["did_document"];
             console.log(did_document);
 
-        hex = did_document.substr(2);
+            hex = did_document.substr(2);
 
-        const convert = (from, to) => str => Buffer.from(str, from).toString(to);
-        const hexToUtf8 = convert('hex', 'utf8');
+            const convert = (from, to) => str => Buffer.from(str, from).toString(to);
+            const hexToUtf8 = convert('hex', 'utf8');
 
-        
-        let str =  hexToUtf8(hex);
-        
-        console.log(str)
-        // const myContext = await didParser.parse(str);
 
-        didJSON = JSON.parse(str);
-        let assetionMethodPublicKeymultibase = didJSON["assertionMethod"][0]["publicKeyMultibase"];
+            let str = hexToUtf8(hex);
 
-        console.log(assetionMethodPublicKeymultibase);
+            console.log(str)
+            // const myContext = await didParser.parse(str);
+
+            didJSON = JSON.parse(str);
+            let assetionMethodPublicKeymultibase = didJSON["assertionMethod"][0]["publicKeyMultibase"];
+
+            console.log(assetionMethodPublicKeymultibase);
 
         } else {
             console.log("Error");
@@ -140,25 +173,30 @@ app.get('/',  async (rq, res)=> {
         res.status = 200;
 
         res.json(didJSON);
-      });
+    });
 
 });
 
+
+app.get('/api/v1/vcp', (req, res) => {
+    res.json({ vcps: [...vcpsReceived] })
+})
+
 app.post('/api/v1/vcp', async (rq, res) => {
 
-    let vc = rq.body.vcp;
+    const vcp = rq.body.vcp;
 
-    let vc_proof =  vc["verifiableCredential"][0]["proof"]; // VC proof not the VPC proof
+    const vcpVerified = await vcpVerfy(vcp);
+
+    const vc = vcp["verifiableCredential"][0];
+
+    let vc_proof = vc["proof"]; // VC proof not the VPC proof
     let vc_proof_value = vc_proof["proofValue"]; // JWS
     let verification_method = vc_proof["verificationMethod"].split(":")[2]; // DID URI
-    let status = 400;
-    let message = {"verification": false};
-    // *****************************************************************************************************
 
-    let did_document = {};
-    // let hash = "0x2a674c8ef2bc79f13faf22d4165ac99efc2cabe6e3194c0a58336fed7c56b1b3";
     const provider = new WsProvider("wss://trackback.dev");
-    types = {
+
+    const types = {
         "VerifiableCredential": {
             "account_id": "AccountId",
             "public_key": "Vec<8>",
@@ -175,7 +213,8 @@ app.post('/api/v1/vcp', async (rq, res) => {
             "active": "Option<bool>"
         }
     };
-    let rpc = {
+
+    const rpc = {
         "didModule": {
             "dIDDocument": {
                 "description": "Get DID Documnet",
@@ -189,69 +228,56 @@ app.post('/api/v1/vcp', async (rq, res) => {
             }
         }
     };
+
     const api = await ApiPromise.create({ provider: provider, types, rpc });
 
-
-    api.query.didModule.dIDDocument(verification_method, (result) => {
-        let didJSON = {};
-        if (!result.isEmpty){
-            let res = JSON.parse(result.toString());
-            
-            let owner = res["sender_account_id"].toString();
-            let block_number = res["block_number"];
-            did_document = res["did_document"];
-
-            console.log(did_document);
-
-            hex = did_document.substr(2);
-
-            const convert = (from, to) => str => Buffer.from(str, from).toString(to);
-            const hexToUtf8 = convert('hex', 'utf8');
-
-            
-            let str =  hexToUtf8(hex);
-            
-            console.log(str)
-
-            didJSON = JSON.parse(str);
-            let pk = didJSON["assertionMethod"][0]["publicKeyMultibase"];
-
-            console.log(pk);
-
-
-            let buff = Buffer.from(pk);
-            const arr = new Uint8Array(buff);
-            
-            console.log(arr);
-
-            (async() => {
-                const decoder = new TextDecoder();
-                const jws = vc_proof_value;
-                const { payload, protectedHeader } = await compactVerify(jws, arr);
-    
-                console.log(protectedHeader)
-                console.log(decoder.decode(payload))
-              })();
-
-            // const decoder = new TextDecoder();
-            // const jws = vc_proof_value;
-            // const { payload, protectedHeader } = await compactVerify(jws, assetionMethodPublicKeymultibase);
-
-            // console.log(protectedHeader)
-            // console.log(decoder.decode(payload))
-
-            status = 200;
-            message = {"verification": true};
-                
-
-        }
-
-        res.status = status;
-        res.json(message);
+    const json = await new Promise((resolve, reject) => {
+        api.query.didModule.dIDDocument(verification_method, (result) => {
+            if (!result.isEmpty) {
+                resolve(JSON.parse(result.toString()));
+            } else {
+                reject()
+            }
+        });
     });
+
+    const did_document_hex = json.did_document;
+    const hex = did_document_hex.substr(2);
+
+    const didJSON = JSON.parse(hexToUtf8(hex));
+
+    let pk = didJSON["assertionMethod"][0]["publicKeyMultibase"];
+
+    const { proof, ...rest } = vc;
+
+    const vcVerified = await verify(vc_proof_value, pk, JSON.stringify({ ...rest }));
+
+    if (vcVerified && vcpVerified) {
+        vcpsReceived.push(vcp);
+    }
+
+    res.json({
+        VcVerified: vcVerified,
+        VcpVerified: vcpVerified,
+    });
+
 
 })
 
-app.listen(port, ()=> {
+app.listen(port, () => {
     console.log(`Demo verifier service running on port ${port}`);
+});
+
+console.log('SERVER STARTING');
+
+process.on('uncaughtException', function (exception) {
+    console.log(exception);
+    process.exit(1);
+});
+
+process.on('SIGTERM', () => {
+    console.log('SIGTERM signal received: closing HTTP server')
+    server.close(() => {
+        console.log('HTTP server closed')
+    })
 });
