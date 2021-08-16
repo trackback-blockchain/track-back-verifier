@@ -18,7 +18,7 @@ const convert = (from, to) => str => Buffer.from(str, from).toString(to);
 const hexToUtf8 = convert('hex', 'utf8');
 
 const vcpsReceived = [];
-const currentlySharedClaims = {"shared": null};
+const currentlySharedClaims = {"shared": null, "verified": false};
 
 async function verify(jws, publicKeyHex, payloadToVerify) {
 
@@ -132,6 +132,7 @@ app.post('/api/v1/vcp', async (rq, res) => {
     if (vcVerified && vcpVerified) {
         vcpsReceived.push(vcp);
         currentlySharedClaims["shared"] = sharedVCP;
+        currentlySharedClaims["verified"] = true;
      }
 
     let verification = {
