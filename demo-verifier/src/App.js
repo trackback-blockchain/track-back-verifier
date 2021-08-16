@@ -5,6 +5,7 @@ var QRCode = require('qrcode.react');
 
 
 async function getSharedVCPS() {
+  // const response = await fetch("https://81403ecb6192.ngrok.io/api/v1/vcp"); 
   const response = await fetch("https://verifier.trackback.dev/api/v1/vcp")
   return await response.json()
 }
@@ -31,13 +32,16 @@ function App() {
 
     <div className="App">
       <div className="App-title">TrackBack™ Verifier</div>
+      <div>
+        
+      </div>
       <div className="App-header">
         <QRCode value="https://verifier.trackback.dev/api/v1/vcp" size={500} />
-        {/* <QRCode value="https://a684b174e0d5.ngrok.io/api/v1/vcp" size={500} className="QR-Scanner"/> */}
+        {/* <QRCode value="https://81403ecb6192.ngrok.io/api/v1/vcp" size={500} className="QR-Scanner"/> */}
       </div>
       <div className="details">
         <div className="verifiedCredentials">
-          Verified credentials
+          Verified Credentials
         </div>
         <div className="tableContainer">
 
