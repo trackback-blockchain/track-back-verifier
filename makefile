@@ -42,7 +42,7 @@ build: build-api build-verifier build-nginx
 clean:
 	docker-compose stop -t 1
 	docker-compose rm -f
-	docker rmi $(docker images -q)
+	docker rmi -f $(shell docker images -q)
 
 destroy:
 	cd terraform/ap-southeast-2 && terraform destroy -var="branch_name=$(BRANCH_NAME)" --auto-approve 
