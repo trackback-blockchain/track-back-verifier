@@ -32,7 +32,7 @@ function App() {
     <div className="App">
       <div className="App-title">TrackBack™ Verifier</div>
       <div className="App-header">
-        <QRCode value="https://60b22e7974f1.ngrok.io/api/v1/vcp" size={500} />
+        <QRCode value="https://verifier.trackback.dev/api/v1/vcp" size={500} />
         {/* <QRCode value="https://a684b174e0d5.ngrok.io/api/v1/vcp" size={500} className="QR-Scanner"/> */}
       </div>
       <div className="details">
