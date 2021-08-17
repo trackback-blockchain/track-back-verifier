@@ -1,6 +1,7 @@
 export REGION						:= ap-southeast-2
 export ECR_REPO_URL					:= 533545012068.dkr.ecr.ap-southeast-2.amazonaws.com
 export BRANCH_NAME					:=$(shell git branch --show-current)
+export IP_WEB						:=$(shell cd terraform/ap-southeast-2 && terraform output -json | jq .info.value.aws_instance_verifier_web )
 
 run: ecr-login
 	docker-compose up --build --force-recreate --remove-orphans -d
@@ -49,3 +50,6 @@ destroy:
 
 deploy: destroy
 	cd terraform/ap-southeast-2 && terraform apply -var="branch_name=$(BRANCH_NAME)" --auto-approve 
+
+remotedeploy: ecr-login build
+	ssh -i ~/.ssh/ec2_key.pem ubuntu@$(IP_WEB) -t 'cd track-back-verifier && make redeploy'
