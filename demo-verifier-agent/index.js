@@ -47,12 +47,16 @@ async function vcpVerfy(vcp) {
     return result;
 }
 
-app.get('/api/v1/vcp', (req, res) => {
+app.get('/api/v1/verifiable_credentials', (req, res) => {
     res.json(
         {
             vcps: [...vcpsReceived]
         }
     )
+})
+
+app.get('/api/v1/vcp', (req, res) => {
+    res.send("");
 })
 
 app.post('/api/v1/vcp', async (rq, res) => {
@@ -67,8 +71,9 @@ app.post('/api/v1/vcp', async (rq, res) => {
     let vc_proof_value = vc_proof["proofValue"]; // JWS
     let verification_method = vc_proof["verificationMethod"].split(":")[2]; // DID URI
 
-    const provider = new WsProvider("wss://trackback.dev");
-
+    // const provider = new WsProvider("wss://trackback.dev");
+    const provider = new WsProvider("ws://127.0.0.1:9944");
+    
     const types = {
         "VerifiableCredential": {
             "account_id": "AccountId",
