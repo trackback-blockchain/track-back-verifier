@@ -5,7 +5,8 @@ var QRCode = require('qrcode.react');
 
 
 async function getSharedVCPS() {
-  const response = await fetch("https://verifier.trackback.dev/api/v1/vcp")
+  // const response = await fetch("https://cb75d0055644.ngrok.io/api/v1/verifiable_credentials"); 
+  const response = await fetch("https://verifier.trackback.dev/api/v1/verifiable_credentials")
   return await response.json()
 }
 
@@ -31,13 +32,16 @@ function App() {
 
     <div className="App">
       <div className="App-title">TrackBack™ Verifier</div>
+      <div>
+        
+      </div>
       <div className="App-header">
         <QRCode value="https://verifier.trackback.dev/api/v1/vcp" size={500} />
-        {/* <QRCode value="https://a684b174e0d5.ngrok.io/api/v1/vcp" size={500} className="QR-Scanner"/> */}
+        {/* <QRCode value="https://cb75d0055644.ngrok.io/api/v1/vcp" size={500} className="QR-Scanner"/> */}
       </div>
       <div className="details">
         <div className="verifiedCredentials">
-          Verified credentials
+          Verified Credentials
         </div>
         <div className="tableContainer">
 
@@ -51,7 +55,8 @@ function App() {
               return <tr>
                 <td>
                   <table className="styled-table2">
-                    <tr>
+                    {vcp && (
+                      <tr>
                       <td>
                         Given Name
                       </td>
@@ -59,7 +64,9 @@ function App() {
                         {vcp.givenName}
                       </td>
                     </tr>
-                    <tr>
+                    )}
+                    {vcp && (
+                      <tr>
                       <td>
                         Family Name
                       </td>
@@ -67,22 +74,25 @@ function App() {
                         {vcp.familyName}
                       </td>
                     </tr>
-                    {vcp.bloodType && (
-                      <tr>
-                        <td>
-                          Blood Type
-                        </td>
-                        <td>
-                          {vcp.bloodType || "N/A"}
-                        </td>
-                      </tr>
-
                     )}
-
+                    {vcp && vcp.bloodType && (
+                      <tr>
+                      <td>
+                        Blood Type
+                      </td>
+                      <td>
+                        {vcp.bloodType || "N/A"}
+                      </td>
+                    </tr>
+                    )}
                   </table>
                 </td>
-                <td>{moment((datetime)).format()}</td>
-                <td>{vcVerified ? "Yes" : "No"}</td>
+                {vcp && (
+                  <td>{moment((datetime)).format()}</td>
+                )}
+                {vcp && (
+                  <td>{vcVerified ? "Yes" : "No"}</td>
+                )}
               </tr>
             })}
           </table>

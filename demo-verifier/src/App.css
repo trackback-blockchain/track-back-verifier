@@ -20,7 +20,8 @@
 }
 
 .App-title {
-  font-size: 5rem;
+  height: 80px;
+  font-size: 3rem;
   color: white;
   background-color: #212b0e;
 }
@@ -104,6 +105,11 @@
   padding: 10px 10px;
 }
 
+
+.verifiedCredentials{
+  font-size: 3rem;
+  background-color: #ffe656;
+}
 
 @keyframes App-logo-spin {
   from {

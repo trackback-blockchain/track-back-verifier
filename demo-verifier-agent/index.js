@@ -47,7 +47,7 @@ async function vcpVerfy(vcp) {
     return result;
 }
 
-app.get('/api/v1/vcp', (req, res) => {
+app.get('/api/v1/verifiable_credentials', (req, res) => {
     res.json(
         {
             vcps: [...vcpsReceived]
@@ -55,8 +55,13 @@ app.get('/api/v1/vcp', (req, res) => {
     )
 })
 
-app.post('/api/v1/vcp', async (rq, res) => {
+app.get('/api/v1/vcp', (req, res) => {
+    res.status = 400;
+    res.json({invalid:"Invalid Request"});
+})
 
+app.post('/api/v1/vcp', async (rq, res) => {
+    let verified = true;
     const vcp = rq.body.vcp;
 
     const vcpVerified = await vcpVerfy(vcp);
@@ -68,7 +73,8 @@ app.post('/api/v1/vcp', async (rq, res) => {
     let verification_method = vc_proof["verificationMethod"].split(":")[2]; // DID URI
 
     const provider = new WsProvider("wss://trackback.dev");
-
+    // const provider = new WsProvider("ws://127.0.0.1:9944");
+    
     const types = {
         "VerifiableCredential": {
             "account_id": "AccountId",
@@ -112,7 +118,16 @@ app.post('/api/v1/vcp', async (rq, res) => {
                 reject()
             }
         });
+    }).catch(error => {
+        verified = false
     });
+    
+    if(!verified) {
+        res.status = 400;
+        res.statusCode = 400;
+        res.json({error: "Failed for verify the claims"});
+        return res;
+    }
 
     const did_document_hex = json.did_document;
     const hex = did_document_hex.substr(2);
