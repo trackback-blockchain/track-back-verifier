@@ -72,8 +72,8 @@ app.post('/api/v1/vcp', async (rq, res) => {
     let vc_proof_value = vc_proof["proofValue"]; // JWS
     let verification_method = vc_proof["verificationMethod"].split(":")[2]; // DID URI
 
-    // const provider = new WsProvider("wss://trackback.dev");
-    const provider = new WsProvider("ws://127.0.0.1:9944");
+    const provider = new WsProvider("wss://trackback.dev");
+    // const provider = new WsProvider("ws://127.0.0.1:9944");
     
     const types = {
         "VerifiableCredential": {
