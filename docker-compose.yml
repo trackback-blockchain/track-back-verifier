@@ -4,6 +4,12 @@ services:
     image: 533545012068.dkr.ecr.ap-southeast-2.amazonaws.com/demo-verifier-agent:latest 
     environment: 
       PORT: 80
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: demo-verifier
+        awslogs-region: ap-southeast-2
+        awslogs-stream: demo-verifier-agent-latest
   verifier:
     image: 533545012068.dkr.ecr.ap-southeast-2.amazonaws.com/demo-verifier:latest 
     environment: 
