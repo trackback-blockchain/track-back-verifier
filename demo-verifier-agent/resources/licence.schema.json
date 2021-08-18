@@ -1,0 +1,46 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$id": "https://verifier.trackback.dev/api/v1/licence.schema.json",
+    "title": "VerifiableCredentialsRequest",
+    "description": "DigitalDriverLicenceCredential",
+    "type": "object",
+    "vc":"DigitalDriverLicenceCredential",
+    "properties": {
+        "licence": {
+            "$id": "#/properties/licence",
+            "type": "string"
+        },
+        "surname": {
+            "$id": "#/properties/surname",
+            "type": "string"
+        },
+        "firstNames": {
+            "$id": "#/properties/firstNames",
+            "type": "string"
+        },
+        "dateOfBirth": {
+            "$id": "#/properties/dateOfBirth",
+            "type": "string"
+        },
+        "version": {
+            "$id": "#/properties/version",
+            "type": "string"
+        },
+        "dateOfExpiry": {
+            "$id": "#/properties/dateOfExpiry",
+            "type": "string"
+        },
+        "entitilements": {
+            "$id": "#/properties/entitilements",
+            "type": "string"
+        }
+    },
+    "required": [
+        "licence",
+        "surname",
+        "firstNames",
+        "dateOfBirth",
+        "version",
+        "dateOfExpiry"
+    ]
+}

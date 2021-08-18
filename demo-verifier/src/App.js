@@ -10,9 +10,39 @@ async function getSharedVCPS() {
   return await response.json()
 }
 
+function camelCaseToLetter(text) {
+  const result = text.replace(/([A-Z])/g, " $1");
+  return result.charAt(0).toUpperCase() + result.slice(1);
+}
+
+const MODE_DIA = "MODE_DIA"
+const MODE_TRACKBACK = "MODE_TRACKBACK"
+
+
+function getModeParams(mode) {
+  if (mode === MODE_DIA) {
+    return {
+      title: "DIA™ Verifier",
+      url: "https://verifier.trackback.dev/api/v1/vcp/licenceRequest"
+    }
+  } else {
+    return {
+      title: "TrackBack™ Verifier",
+      url: "https://verifier.trackback.dev/api/v1/vcp/passportRequest"
+    }
+  }
+}
+
 function App() {
 
   const [data, setData] = useState([])
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const verifier = urlParams.get('verifier') || "";
+
+  const MODE = verifier.toLowerCase() === "dia" ? MODE_DIA : MODE_TRACKBACK
+
+  const params = getModeParams(MODE);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -28,15 +58,16 @@ function App() {
 
     return () => clearInterval(interval);
   }, []);
+
   return (
 
     <div className="App">
-      <div className="App-title">TrackBack™ Verifier</div>
+      <div className="App-title">{params.title}</div>
       <div>
-        
+
       </div>
       <div className="App-header">
-        <QRCode value="https://verifier.trackback.dev/api/v1/vcp" size={500} />
+        <QRCode value={params.url} size={500} />
         {/* <QRCode value="https://cb75d0055644.ngrok.io/api/v1/vcp" size={500} className="QR-Scanner"/> */}
       </div>
       <div className="details">
@@ -45,54 +76,46 @@ function App() {
         </div>
         <div className="tableContainer">
 
-          <table  className="styled-table">
+          <table className="styled-table">
             <tr>
               <th>Claim</th>
               <th>Date</th>
               <th>Verified</th>
             </tr>
-            {(data.vcps || []).map(({ vcp, datetime, vcVerified }) => {
+            {(data.vcps || []).map(({ vcs, datetime, vcpVerified }) => {
+
+              if ((vcs || [])[0].type === "DigitalDriverLicenceCredential" && MODE === MODE_TRACKBACK) {
+                return <></>
+              }
+              if ((vcs || [])[0].type === "DigitalPassportCredential" && MODE === MODE_DIA) {
+                return <></>
+              }
+
               return <tr>
                 <td>
                   <table className="styled-table2">
-                    {vcp && (
-                      <tr>
-                      <td>
-                        Given Name
-                      </td>
-                      <td>
-                        {vcp.givenName}
-                      </td>
-                    </tr>
-                    )}
-                    {vcp && (
-                      <tr>
-                      <td>
-                        Family Name
-                      </td>
-                      <td>
-                        {vcp.familyName}
-                      </td>
-                    </tr>
-                    )}
-                    {vcp && vcp.bloodType && (
-                      <tr>
-                      <td>
-                        Blood Type
-                      </td>
-                      <td>
-                        {vcp.bloodType || "N/A"}
-                      </td>
-                    </tr>
-                    )}
+
+                    {(vcs || []).map((vc) => {
+                      const { id, valid, type, ...other } = vc
+                      const keys = Object.keys(other);
+
+                      return (
+                        <tr>
+                          <td>
+                            {camelCaseToLetter(keys[0])}
+                          </td>
+                          <td>
+                            {other[keys[0]]}
+                          </td>
+                        </tr>
+                      )
+                    })}
                   </table>
                 </td>
-                {vcp && (
-                  <td>{moment((datetime)).format()}</td>
-                )}
-                {vcp && (
-                  <td>{vcVerified ? "Yes" : "No"}</td>
-                )}
+
+                <td>{moment((datetime)).format()}</td>
+                <td>{vcpVerified ? "Yes" : "No"}</td>
+
               </tr>
             })}
           </table>

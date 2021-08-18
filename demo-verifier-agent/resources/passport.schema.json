@@ -1,0 +1,51 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$id": "https://verifier.trackback.dev/api/v1/passport.schema.json",
+    "title": "VerifiableCredentialsRequest",
+    "description": "DigitalPassportCredential",
+    "vc":"DigitalPassportCredential",
+    "type": "object",
+    "required": [
+        "givenNames",
+        "surname",
+        "nationality",
+        "dateOfBirth",
+        "dateOfIssue",
+        "dateOfExpiry",
+        "passportNumber"
+    ],
+    "properties": {
+        "givenNames": {
+            "$id": "#/properties/traveller/properties/givenNames",
+            "type": "string"
+        },
+        "surname": {
+            "$id": "#/properties/traveller/properties/surname",
+            "type": "string"
+        },
+        "nationality": {
+            "$id": "#/properties/traveller/properties/nationality",
+            "type": "string"
+        },
+        "dateOfBirth": {
+            "$id": "#/properties/traveller/properties/dateOfBirth",
+            "type": "string"
+        },
+        "dateOfIssue": {
+            "$id": "#/properties/traveller/properties/dateOfIssue",
+            "type": "string"
+        },
+        "dateOfExpiry": {
+            "$id": "#/properties/traveller/properties/dateOfExpiry",
+            "type": "string"
+        },
+        "passportNumber": {
+            "$id": "#/properties/traveller/properties/passportNumber",
+            "type": "string"
+        },
+        "bloodType": {
+            "$id": "#/properties/traveller/properties/bloodType",
+            "type": "string"
+        }
+    }
+}
