@@ -23,12 +23,12 @@ function getModeParams(mode) {
   if (mode === MODE_DIA) {
     return {
       title: "DIA™ Verifier",
-      url: "https://verifier.trackback.dev/api/v1/vcp/licenceRequest"
+      url: "https://wallet.trackback.dev?r=https://verifier.trackback.dev/api/v1/vcp/licenceRequest"
     }
   } else {
     return {
       title: "TrackBack™ Verifier",
-      url: "https://verifier.trackback.dev/api/v1/vcp/passportRequest"
+      url: "https://wallet.trackback.dev?r=https://verifier.trackback.dev/api/v1/vcp/passportRequest"
     }
   }
 }
