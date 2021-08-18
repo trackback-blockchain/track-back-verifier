@@ -85,34 +85,6 @@ function App() {
                       </td>
                     </tr>
                     )}
-                    {/* <tr>
-                      <td>
-                        Given Name
-                      </td>
-                      <td>
-                        {vcp.givenName}
-                      </td>
-                    </tr> */}
-                    {/* <tr>
-                      <td>
-                        Family Name
-                      </td>
-                      <td>
-                        {vcp.familyName}
-                      </td>
-                    </tr> */}
-                    {/* {vcp.bloodType && (
-                      <tr>
-                        <td>
-                          Blood Type
-                        </td>
-                        <td>
-                          {vcp.bloodType || "N/A"}
-                        </td>
-                      </tr>
-
-                    )} */}
-
                   </table>
                 </td>
                 {vcp && (
