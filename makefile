@@ -3,8 +3,15 @@ export ECR_REPO_URL					:= 533545012068.dkr.ecr.ap-southeast-2.amazonaws.com
 export BRANCH_NAME					:=$(shell git branch --show-current)
 export IP_WEB						:=$(shell cd terraform/ap-southeast-2 && terraform output -json | jq .info.value.aws_instance_verifier_web )
 
+
 run: ecr-login
 	docker-compose up --build --force-recreate --remove-orphans -d
+
+run-trackback-dia: ecr-login
+	docker-compose --env-file ./verfier-dia.env up --build --force-recreate --remove-orphans -d
+
+run-trackback-ta: ecr-login
+	docker-compose --env-file ./verfier-ta.env up --build --force-recreate --remove-orphans -d
 
 redeploy: ecr-login clean run
 

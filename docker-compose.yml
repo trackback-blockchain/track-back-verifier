@@ -9,7 +9,7 @@ services:
       options:
         awslogs-group: demo-verifier
         awslogs-region: ap-southeast-2
-        awslogs-stream: demo-verifier-agent-latest
+        awslogs-stream: demo-verifier-${VERFIER_NAME}
   verifier:
     image: 533545012068.dkr.ecr.ap-southeast-2.amazonaws.com/demo-verifier:latest 
     environment: 

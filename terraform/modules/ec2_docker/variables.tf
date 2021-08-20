@@ -16,3 +16,9 @@ variable "branch_name" {
 variable "cloud_watch_name" {
   type = string
 }
+
+
+variable "verifiers" {
+  type    = list(string)
+  default = [ "trackback-dia", "trackback-ta" ]
+}

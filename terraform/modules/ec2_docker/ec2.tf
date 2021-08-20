@@ -1,6 +1,9 @@
 data "aws_lb_target_group" "data_aws_alb_tg_verifier" {
   arn = "arn:aws:elasticloadbalancing:ap-southeast-2:533545012068:targetgroup/Verifier/a0db863014b7a53a"
 }
+data "aws_lb_target_group" "data_aws_alb_tg_verifier_dia" {
+  arn = "arn:aws:elasticloadbalancing:ap-southeast-2:533545012068:targetgroup/Verifier-DIA/a639763c33d9b14f"
+}
 
 resource "aws_security_group" "aws_sg_verifier_demo" {
   name = "security_group for aws_sg_verifier_demo"
@@ -32,7 +35,9 @@ resource "aws_security_group" "aws_sg_verifier_demo" {
 
 
 
-resource "aws_instance" "aws_instance_verifier_web" {
+resource "aws_instance" "verifier_web" {
+  count = 2
+
   ami                         = "ami-0567f647e75c7bc05"
   instance_type               = "t3.medium"
   vpc_security_group_ids      = [aws_security_group.aws_sg_verifier_demo.id]
@@ -41,7 +46,7 @@ resource "aws_instance" "aws_instance_verifier_web" {
   iam_instance_profile        = aws_iam_instance_profile.aws_iam_instance_profile_verifier_profile.id
 
   tags = {
-    Name = "aws_instance_verifier_web"
+    Name = "verifier_web ${var.verifiers[count.index]}"
   }
 
   root_block_device {
@@ -80,19 +85,30 @@ git clone --single-branch --branch ${var.branch_name} https://${var.git_token}@g
 chown ubuntu:ubuntu -R track-back-verifier
 
 cd track-back-verifier
-make run
+make run-${var.verifiers[count.index]}
 
 EOF
 
 }
 
-resource "aws_lb_target_group_attachment" "aws_tg_attach_verifier_demo" {
-  target_group_arn = data.aws_lb_target_group.data_aws_alb_tg_verifier.arn
-  target_id        = aws_instance.aws_instance_verifier_web.id
+
+resource "aws_lb_target_group_attachment" "aws_tg_attach_verifier_dia" {
+  target_group_arn = data.aws_lb_target_group.data_aws_alb_tg_verifier_dia.arn
+  target_id        = aws_instance.verifier_web[0].id
   port             = 80
 }
 
-output "aws_instance_verifier_web" {
-  value = aws_instance.aws_instance_verifier_web.public_ip
+resource "aws_lb_target_group_attachment" "aws_tg_attach_verifier_ta" {
+  target_group_arn = data.aws_lb_target_group.data_aws_alb_tg_verifier.arn
+  target_id        = aws_instance.verifier_web[1].id
+  port             = 80
 }
 
+
+output "verifier_dia_ip" {
+  value = aws_instance.verifier_web[0].public_ip
+}
+
+output "verifier_ta_ip" {
+  value = aws_instance.verifier_web[1].public_ip
+}
