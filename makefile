@@ -8,10 +8,10 @@ run: ecr-login
 	docker-compose up --build --force-recreate --remove-orphans -d
 
 run-trackback-dia: ecr-login
-	docker-compose --env-file ./verfier-dia.env up --build --force-recreate --remove-orphans -d
+	docker-compose --env-file verifier-dia.env up --build --force-recreate --remove-orphans -d
 
 run-trackback-ta: ecr-login
-	docker-compose --env-file ./verfier-ta.env up --build --force-recreate --remove-orphans -d
+	docker-compose --env-file verifier-ta.env up --build --force-recreate --remove-orphans -d
 
 redeploy: ecr-login clean run
 
