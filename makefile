@@ -1,11 +1,9 @@
 export REGION						:= ap-southeast-2
 export ECR_REPO_URL					:= 533545012068.dkr.ecr.ap-southeast-2.amazonaws.com
 export BRANCH_NAME					:=$(shell git branch --show-current)
-export IP_WEB						:=$(shell cd terraform/ap-southeast-2 && terraform output -json | jq .info.value.aws_instance_verifier_web )
+export IP_WEB_DIA					:=$(shell cd terraform/ap-southeast-2 && terraform output -json | jq .info.value.verifier_dia_ip )
+export IP_WEB_TA					:=$(shell cd terraform/ap-southeast-2 && terraform output -json | jq .info.value.verifier_ta_ip )
 
-
-run: ecr-login
-	docker-compose up --build --force-recreate --remove-orphans -d
 
 run-trackback-dia: ecr-login
 	docker-compose --env-file verifier-dia.env up --build --force-recreate --remove-orphans -d
@@ -13,7 +11,9 @@ run-trackback-dia: ecr-login
 run-trackback-ta: ecr-login
 	docker-compose --env-file verifier-ta.env up --build --force-recreate --remove-orphans -d
 
-redeploy: ecr-login clean run
+redeploy-ta: ecr-login clean run-trackback-ta
+
+redeploy-dia: ecr-login clean run-trackback-dia
 
 stop:
 	docker-compose stop -t 1
@@ -59,4 +59,5 @@ deploy: destroy
 	cd terraform/ap-southeast-2 && terraform apply -var="branch_name=$(BRANCH_NAME)" --auto-approve 
 
 remotedeploy: ecr-login build
-	ssh -i ~/.ssh/ec2_key.pem ubuntu@$(IP_WEB) -t 'cd track-back-verifier && make redeploy'
+	ssh -i ~/.ssh/ec2_key.pem ubuntu@$(IP_WEB_DIA) -t 'cd track-back-verifier && make redeploy-dia'
+	ssh -i ~/.ssh/ec2_key.pem ubuntu@$(IP_WEB_TA) -t 'cd track-back-verifier && make redeploy-ta'
