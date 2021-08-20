@@ -22,13 +22,13 @@ const MODE_TRACKBACK = "MODE_TRACKBACK"
 function getModeParams(mode) {
   if (mode === MODE_DIA) {
     return {
-      title: "DIA™ Verifier",
-      url: "https://wallet.trackback.dev?r=https://verifier.trackback.dev/api/v1/vcp/licenceRequest"
+      title: "Trackback DIA™",
+      url: "https://wallet.trackback.dev?r=https://trackback-dia.trackback.dev/api/v1/vcp/passportRequest"
     }
   } else {
     return {
-      title: "TrackBack™ Verifier",
-      url: "https://wallet.trackback.dev?r=https://verifier.trackback.dev/api/v1/vcp/passportRequest"
+      title: "Trackback Transport Authority™",
+      url: "https://wallet.trackback.dev?r=https://trackback-ta.trackback.dev/api/v1/vcp/licenceRequest"
     }
   }
 }
@@ -37,17 +37,13 @@ function App() {
 
   const [data, setData] = useState([])
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const verifier = urlParams.get('verifier') || "";
-
-  const MODE = verifier.toLowerCase() === "dia" ? MODE_DIA : MODE_TRACKBACK
+  const MODE = window.location.host.indexOf("dia") > 0 ? MODE_DIA : MODE_TRACKBACK
 
   const params = getModeParams(MODE);
 
   useEffect(() => {
     const interval = setInterval(() => {
       getSharedVCPS().then((data) => {
-        console.log(data)
         if (!data) return;
         data.vcps.sort((a, b) => {
           return new Date(b.datetime) - new Date(a.datetime);
@@ -83,13 +79,6 @@ function App() {
               <th>Verified</th>
             </tr>
             {(data.vcps || []).map(({ vcs, datetime, vcpVerified }) => {
-
-              if ((vcs || [])[0].type === "DigitalDriverLicenceCredential" && MODE === MODE_TRACKBACK) {
-                return <></>
-              }
-              if ((vcs || [])[0].type === "DigitalPassportCredential" && MODE === MODE_DIA) {
-                return <></>
-              }
 
               return <tr>
                 <td>
