@@ -5,8 +5,8 @@ var QRCode = require('qrcode.react');
 
 
 async function getSharedVCPS() {
-  // const response = await fetch("https://cb75d0055644.ngrok.io/api/v1/verifiable_credentials"); 
-  const response = await fetch("https://verifier.trackback.dev/api/v1/verifiable_credentials")
+  const response = await fetch("https://b496-101-100-129-58.ngrok.io/api/v1/verifiable_credentials"); 
+  // const response = await fetch("https://verifier.trackback.dev/api/v1/verifiable_credentials")
   return await response.json()
 }
 
@@ -23,12 +23,14 @@ function getModeParams(mode) {
   if (mode === MODE_DIA) {
     return {
       title: "Trackback DIA™",
-      url: "https://wallet.trackback.dev?r=https://trackback-dia.trackback.dev/api/v1/vcp/passportRequest"
+      // url: "https://wallet.trackback.dev?r=https://trackback-dia.trackback.dev/api/v1/vcp/passportRequest"
+      url: "https://wallet.trackback.dev?r=https://b496-101-100-129-58.ngrok.io/api/v1/vcp/passportRequest"
     }
   } else {
     return {
       title: "Trackback Transport Authority™",
-      url: "https://wallet.trackback.dev?r=https://trackback-ta.trackback.dev/api/v1/vcp/licenceRequest"
+      // url: "https://wallet.trackback.dev?r=https://trackback-ta.trackback.dev/api/v1/vcp/licenceRequest"
+      url: "https://wallet.trackback.dev?r=https://b496-101-100-129-58.ngrok.io/api/v1/vcp/licenceRequest"
     }
   }
 }
@@ -73,14 +75,16 @@ function App() {
         <div className="tableContainer">
 
           <table className="styled-table">
-            <tr>
-              <th>Claim</th>
+            <tr className="vc-header">
               <th>Date</th>
+              <th>Claim</th>
               <th>Verified</th>
             </tr>
             {(data.vcps || []).map(({ vcs, datetime, vcpVerified }) => {
 
               return <tr>
+                <td className="datetime">
+                  {moment((datetime)).format()}</td>
                 <td>
                   <table className="styled-table2">
 
@@ -90,11 +94,12 @@ function App() {
 
                       return (
                         <tr>
-                          <td>
-                            {camelCaseToLetter(keys[0])}
+                          <td className="credential-key">
+                          {camelCaseToLetter(keys[0])}
                           </td>
-                          <td>
-                            {other[keys[0]]}
+                          <td className="credential-value ">
+                          
+                          {other[keys[0]]}
                           </td>
                         </tr>
                       )
@@ -102,7 +107,7 @@ function App() {
                   </table>
                 </td>
 
-                <td>{moment((datetime)).format()}</td>
+                
                 <td>{vcpVerified ? "Yes" : "No"}</td>
 
               </tr>

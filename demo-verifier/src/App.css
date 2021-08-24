@@ -86,15 +86,40 @@
   color: #009879;
 }
 
-
+.datetime {
+  background: #fcfff7;
+  vertical-align: top;
+  font-size: 20px;
+}
+.vc-header{
+    text-align: left;
+    font-size: 25px;
+    background: #212b0e;
+    color: white;
+}
 .styled-table2 {
   border-collapse: collapse;
   /* margin: 25px 0; */
   font-size: 0.9em;
   font-family: sans-serif;
   min-width: 400px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  
 }
+
+.credential-key {
+  font-weight: bold;
+  text-align: left;
+  font-size: 15px;
+  background: #cfe0b4;
+}
+
+.credential-value {
+  font-weight: bold;
+  text-align: left;
+  font-size: 15px;
+  background: #f6fbee;
+}
+
 .styled-table2 thead tr {
   background-color: #009879;
   color: #ffffff;
