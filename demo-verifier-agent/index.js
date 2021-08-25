@@ -202,7 +202,7 @@ app.get('/api/v1/vcp/licenceRequest', (req, res) => {
 
     return res.json({
         schema: JSON.parse(fs.readFileSync('./resources/licence.schema.json')),
-        publishUrl: "https://trackback-ta.trackback.dev/api/v1/vcp"
+        publishUrl: "https://trackback-ta.trackback.dev/api/v1/vcp" ,
     })
 });
 

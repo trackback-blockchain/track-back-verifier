@@ -1,11 +1,18 @@
 import { useEffect, useState } from 'react';
 import moment from 'moment';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fab } from '@fortawesome/free-brands-svg-icons'
+import { faCheckSquare, faCoffee, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
+
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 import './App.css';
+library.add(fab, faCheckSquare, faCoffee ,faCheck, faTimes)
 var QRCode = require('qrcode.react');
 
 
 async function getSharedVCPS() {
-  // const response = await fetch("https://cb75d0055644.ngrok.io/api/v1/verifiable_credentials"); 
   const response = await fetch("/api/v1/verifiable_credentials")
   return await response.json()
 }
@@ -73,14 +80,16 @@ function App() {
         <div className="tableContainer">
 
           <table className="styled-table">
-            <tr>
-              <th>Claim</th>
+            <tr className="vc-header">
               <th>Date</th>
+              <th>Claim</th>
               <th>Verified</th>
             </tr>
             {(data.vcps || []).map(({ vcs, datetime, vcpVerified }) => {
 
               return <tr>
+                <td className="datetime">
+                  {moment((datetime)).format('MMMM Do YYYY, h:mm:ss a')}</td>
                 <td>
                   <table className="styled-table2">
 
@@ -90,11 +99,12 @@ function App() {
 
                       return (
                         <tr>
-                          <td>
-                            {camelCaseToLetter(keys[0])}
+                          <td className="credential-key">
+                          {camelCaseToLetter(keys[0])}
                           </td>
-                          <td>
-                            {other[keys[0]]}
+                          <td className="credential-value ">
+                          
+                          {other[keys[0]]}
                           </td>
                         </tr>
                       )
@@ -102,8 +112,8 @@ function App() {
                   </table>
                 </td>
 
-                <td>{moment((datetime)).format()}</td>
-                <td>{vcpVerified ? "Yes" : "No"}</td>
+                
+                <td>{vcpVerified ? <FontAwesomeIcon icon="check"  className="credential-verified"/>: <FontAwesomeIcon icon="times"  className="credential-counterfeit"/>}</td>
 
               </tr>
             })}
