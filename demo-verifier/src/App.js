@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
 import moment from 'moment';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fab } from '@fortawesome/free-brands-svg-icons'
+import { faCheckSquare, faCoffee, faCheck } from '@fortawesome/free-solid-svg-icons'
+
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 import './App.css';
+library.add(fab, faCheckSquare, faCoffee ,faCheck)
 var QRCode = require('qrcode.react');
 
 
@@ -84,7 +92,7 @@ function App() {
 
               return <tr>
                 <td className="datetime">
-                  {moment((datetime)).format()}</td>
+                  {moment((datetime)).format('MMMM Do YYYY, h:mm:ss a')}</td>
                 <td>
                   <table className="styled-table2">
 
@@ -108,7 +116,7 @@ function App() {
                 </td>
 
                 
-                <td>{vcpVerified ? "Yes" : "No"}</td>
+                <td>{vcpVerified ? <FontAwesomeIcon icon="check"  className="credential-verified"/>: <FontAwesomeIcon icon="check"  className="credential-counterfeit"/>}</td>
 
               </tr>
             })}

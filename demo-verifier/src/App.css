@@ -120,6 +120,21 @@
   background: #f6fbee;
 }
 
+.credential-verified {
+  color: green;
+  font-size: 60px;
+}
+
+.credential-counterfeit {
+  color: red;
+  font-size: 60px;
+}
+
+.credential-verified {
+  color: green;
+  font-size: 60px;
+}
+
 .styled-table2 thead tr {
   background-color: #009879;
   color: #ffffff;
