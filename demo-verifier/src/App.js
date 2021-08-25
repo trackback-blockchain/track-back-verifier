@@ -13,7 +13,7 @@ var QRCode = require('qrcode.react');
 
 
 async function getSharedVCPS() {
-  const response = await fetch("https://verifier.trackback.dev/api/v1/verifiable_credentials")
+  const response = await fetch("/api/v1/verifiable_credentials")
   return await response.json()
 }
 

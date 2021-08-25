@@ -55,9 +55,13 @@ async function verifyVC(api, vc) {
 
     try {
 
-        let vc_proof = vc["proof"]; // VC proof not the VPC proof
-        let vc_proof_value = vc_proof["proofValue"]; // JWS
-        let verification_method = vc_proof["verificationMethod"].split(":")[2]; // DID URI
+        const vc_proof = vc["proof"]; // VC proof not the VPC proof
+        const vc_proof_value = vc_proof["proofValue"]; // JWS
+        const verification_method = vc_proof["verificationMethod"]
+
+        console.log('Verifing VC:', JSON.stringify(vc))
+        console.log('DID URI: ', verification_method)
+
 
         const json = await new Promise((resolve, reject) => {
             api.query.didModule.dIDDocument(verification_method, (result) => {
@@ -67,14 +71,20 @@ async function verifyVC(api, vc) {
                     reject()
                 }
             });
+        }).catch((error) => {
+            console.log('api.query.didModule.dIDDocument error ', error);
         })
+
+
+        if (!json) return false;
+        console.log('DID: ', JSON.stringify(json))
 
         const did_document_hex = json.did_document;
         const hex = did_document_hex.substr(2);
 
         const didJSON = JSON.parse(hexToUtf8(hex));
 
-        let pk = didJSON["assertionMethod"][0]["publicKeyMultibase"];
+        const pk = didJSON["assertionMethod"][0]["publicKeyMultibase"];
 
         const { proof, ...rest } = vc;
 
@@ -94,7 +104,7 @@ async function validateVerifiableCredential(api, vcs = []) {
         if (vc.type.includes("DigitalDriverLicenceCredential")) {
             return { ...vc.credentialSubject, valid, type: "DigitalDriverLicenceCredential" }
         } else {
-            return { ...vc.credentialSubject.passport.traveller, valid, type: "DigitalPassportCredential"}
+            return { ...vc.credentialSubject.passport.traveller, valid, type: "DigitalPassportCredential" }
         }
     }))
 }
@@ -167,11 +177,17 @@ app.post('/api/v1/vcp', async (rq, res) => {
         console.log('VCP: ', JSON.stringify(vcp))
 
         console.log('VCP VERIFIED: ', vcpVerified)
-        console.log('VC VERIFIED: ', JSON.stringify(validatedVCS))
+        console.log('VC RESULT: ', JSON.stringify(validatedVCS))
+
+        const vcsVerified = validatedVCS.reduce((a, b) => {
+            return a && b.valid;
+        }, true);
+
+        console.log('VC VERIFIED:', vcsVerified)
 
         vcpsReceived.push({ vcs: validatedVCS, datetime: new Date(), vcpVerified: vcpVerified });
 
-        res.json({ result: { vc: validatedVCS, vcpVerified: vcpVerified } })
+        res.json({ result: { vc: validatedVCS, verfied: (vcpVerified && vcsVerified) } })
 
     } catch (error) {
         console.log(error)
