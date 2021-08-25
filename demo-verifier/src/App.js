@@ -14,7 +14,6 @@ var QRCode = require('qrcode.react');
 
 async function getSharedVCPS() {
   const response = await fetch("https://b496-101-100-129-58.ngrok.io/api/v1/verifiable_credentials"); 
-  // const response = await fetch("https://verifier.trackback.dev/api/v1/verifiable_credentials")
   return await response.json()
 }
 
@@ -31,13 +30,11 @@ function getModeParams(mode) {
   if (mode === MODE_DIA) {
     return {
       title: "Trackback DIA™",
-      // url: "https://wallet.trackback.dev?r=https://trackback-dia.trackback.dev/api/v1/vcp/passportRequest"
       url: "https://wallet.trackback.dev?r=https://b496-101-100-129-58.ngrok.io/api/v1/vcp/passportRequest"
     }
   } else {
     return {
       title: "Trackback Transport Authority™",
-      // url: "https://wallet.trackback.dev?r=https://trackback-ta.trackback.dev/api/v1/vcp/licenceRequest"
       url: "https://wallet.trackback.dev?r=https://b496-101-100-129-58.ngrok.io/api/v1/vcp/licenceRequest"
     }
   }

@@ -186,8 +186,7 @@ app.get('/api/v1/vcp/licenceRequest', (req, res) => {
 
     return res.json({
         schema: JSON.parse(fs.readFileSync('./resources/licence.schema.json')),
-        // publishUrl: "https://trackback-ta.trackback.dev/api/v1/vcp" ,
-        publishUrl: "https://b496-101-100-129-58.ngrok.io/api/v1/vcp"
+        publishUrl: "https://trackback-ta.trackback.dev/api/v1/vcp" ,
     })
 });
 
@@ -195,8 +194,7 @@ app.get('/api/v1/vcp/passportRequest', (req, res) => {
 
     return res.json({
         schema: JSON.parse(fs.readFileSync('./resources/passport.schema.json')),
-        // publishUrl: "https://trackback-dia.trackback.dev/api/v1/vcp"
-        publishUrl: "https://b496-101-100-129-58.ngrok.io/api/v1/vcp"
+        publishUrl: "https://trackback-dia.trackback.dev/api/v1/vcp"
     });
 })
 
