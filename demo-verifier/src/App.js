@@ -35,7 +35,7 @@ function getModeParams(mode) {
   } else {
     return {
       title: "Trackback Transport Authority™",
-      url: "https://wallet.trackback.dev?r=https://b496-101-100-129-58.ngrok.io/api/v1/vcp/licenceRequest"
+      url: "https://wallet.trackback.dev?r=https://trackback-ta.trackback.dev/api/v1/vcp/licenceRequest"
     }
   }
 }
