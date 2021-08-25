@@ -12,14 +12,14 @@ run-trackback-dia: ecr-login
 run-trackback-ta: ecr-login
 	docker-compose --env-file verifier-ta.env up --build --force-recreate --remove-orphans -d
 	
-run-trackback-tav: ecr-login
+run-trackback-verifier: ecr-login
 	docker-compose --env-file verifier-tav.env up --build --force-recreate --remove-orphans -d
 
 redeploy-ta: ecr-login clean run-trackback-ta
 
 redeploy-dia: ecr-login clean run-trackback-dia
 
-redeploy-tav: ecr-login clean run-trackback-tav
+redeploy-tav: ecr-login clean run-trackback-verifier
 
 stop:
 	docker-compose stop -t 1
