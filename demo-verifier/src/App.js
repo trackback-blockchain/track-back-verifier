@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
-import { faCheckSquare, faCoffee, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faCheckSquare, faCoffee, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import './App.css';
-library.add(fab, faCheckSquare, faCoffee ,faCheck)
+library.add(fab, faCheckSquare, faCoffee ,faCheck, faTimes)
 var QRCode = require('qrcode.react');
 
 
@@ -116,7 +116,7 @@ function App() {
                 </td>
 
                 
-                <td>{vcpVerified ? <FontAwesomeIcon icon="check"  className="credential-verified"/>: <FontAwesomeIcon icon="check"  className="credential-counterfeit"/>}</td>
+                <td>{vcpVerified ? <FontAwesomeIcon icon="check"  className="credential-verified"/>: <FontAwesomeIcon icon="times"  className="credential-counterfeit"/>}</td>
 
               </tr>
             })}
