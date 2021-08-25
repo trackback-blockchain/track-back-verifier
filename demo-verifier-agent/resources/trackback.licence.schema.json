@@ -1,0 +1,60 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$id": "https://verifier.trackback.dev/api/v1/licence.schema.json",
+    "title": "VerifiableCredentialsRequest",
+    "description": "DigitalDriverLicenceCredentialTrackback",
+    "type": "object",
+    "vc": "DigitalDriverLicenceCredentialTrackback",
+    "properties": {
+        "licence": {
+            "$id": "#/properties/licence",
+            "type": "string"
+        },
+        "surname": {
+            "$id": "#/properties/surname",
+            "type": "string"
+        },
+        "firstNames": {
+            "$id": "#/properties/firstNames",
+            "type": "string"
+        },
+        "version": {
+            "$id": "#/properties/version",
+            "type": "string"
+        },
+        "dateOfExpiry": {
+            "$id": "#/properties/dateOfExpiry",
+            "type": "string"
+        },
+
+        "imageUri": {
+            "$id": "#/properties/imageUri",
+            "type": "string"
+        },
+        "imageHash": {
+            "$id": "#/properties/imageHash",
+            "type": "string"
+        },
+        "dateOfBirth": {
+            "$id": "#/properties/dateOfBirth",
+            "type": "string"
+        },
+        "entitilements": {
+            "$id": "#/properties/entitilements",
+            "type": "string"
+        },
+        "bloodType": {
+            "$id": "#/properties/bloodType",
+            "type": "string"
+        }
+    },
+    "required": [
+        "licence",
+        "version",
+        "surname",
+        "firstNames",
+        "dateOfExpiry",
+        "imageUri",
+        "imageHash"
+    ]
+}

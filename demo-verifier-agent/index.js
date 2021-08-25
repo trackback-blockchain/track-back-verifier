@@ -214,6 +214,14 @@ app.get('/api/v1/vcp/passportRequest', (req, res) => {
     });
 })
 
+app.get('/api/v1/vcp/trackbackLicenceRequest', (req, res) => {
+
+    return res.json({
+        schema: JSON.parse(fs.readFileSync('./resources/trackback.licence.schema.json')),
+        publishUrl: "https://trackback-verifier.trackback.dev/api/v1/vcp"
+    });
+})
+
 app.listen(port, () => {
     console.log(`Demo verifier service running on port ${port}`);
 });

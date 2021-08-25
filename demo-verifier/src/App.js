@@ -8,7 +8,7 @@ import { faCheckSquare, faCoffee, faCheck, faTimes } from '@fortawesome/free-sol
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import './App.css';
-library.add(fab, faCheckSquare, faCoffee ,faCheck, faTimes)
+library.add(fab, faCheckSquare, faCoffee, faCheck, faTimes)
 var QRCode = require('qrcode.react');
 
 
@@ -22,8 +22,9 @@ function camelCaseToLetter(text) {
   return result.charAt(0).toUpperCase() + result.slice(1);
 }
 
-const MODE_DIA = "MODE_DIA"
-const MODE_TRACKBACK = "MODE_TRACKBACK"
+const MODE_DIA = "trackback-dia.trackback.dev"
+const MODE_TA = "trackback-ta.trackback.dev"
+const MODE_TRACKBACK = "trackback-verifier.trackback.dev"
 
 
 function getModeParams(mode) {
@@ -32,10 +33,15 @@ function getModeParams(mode) {
       title: "Trackback DIA™",
       url: "https://wallet.trackback.dev?r=https://trackback-dia.trackback.dev/api/v1/vcp/passportRequest"
     }
-  } else {
+  } else if (mode === MODE_TA) {
     return {
       title: "Trackback Transport Authority™",
       url: "https://wallet.trackback.dev?r=https://trackback-ta.trackback.dev/api/v1/vcp/licenceRequest"
+    }
+  } else {
+    return {
+      title: "Trackback License Authority™",
+      url: "https://wallet.trackback.dev?r=https://trackback-verifier.trackback.dev/api/v1/vcp/trackbackLicenceRequest"
     }
   }
 }
@@ -44,7 +50,7 @@ function App() {
 
   const [data, setData] = useState([])
 
-  const MODE = window.location.host.indexOf("dia") > 0 ? MODE_DIA : MODE_TRACKBACK
+  const MODE = window.location.host;
 
   const params = getModeParams(MODE);
 
@@ -97,14 +103,15 @@ function App() {
                       const { id, valid, type, ...other } = vc
                       const keys = Object.keys(other);
 
+
                       return (
                         <tr>
                           <td className="credential-key">
-                          {camelCaseToLetter(keys[0])}
+                            {camelCaseToLetter(keys[0])}
                           </td>
                           <td className="credential-value ">
-                          
-                          {other[keys[0]]}
+
+                            {other[keys[0]]}
                           </td>
                         </tr>
                       )
@@ -112,8 +119,8 @@ function App() {
                   </table>
                 </td>
 
-                
-                <td>{vcpVerified ? <FontAwesomeIcon icon="check"  className="credential-verified"/>: <FontAwesomeIcon icon="times"  className="credential-counterfeit"/>}</td>
+
+                <td>{vcpVerified ? <FontAwesomeIcon icon="check" className="credential-verified" /> : <FontAwesomeIcon icon="times" className="credential-counterfeit" />}</td>
 
               </tr>
             })}
