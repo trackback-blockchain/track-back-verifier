@@ -96,7 +96,7 @@ function App() {
               <th>Claim</th>
               <th>Verified</th>
             </tr>
-            {(data.vcps || []).map(({ vcs, datetime, vcpVerified }, i) => {
+            {(data.vcps || []).map(({ vcs, datetime, verfied }, i) => {
 
               return <tr key={i}>
                 <td className="datetime">
@@ -128,7 +128,7 @@ function App() {
                 </td>
 
 
-                <td>{vcpVerified ? <FontAwesomeIcon icon="check" className="credential-verified" /> : <FontAwesomeIcon icon="times" className="credential-counterfeit" />}</td>
+                <td>{verfied ? <FontAwesomeIcon icon="check" className="credential-verified" /> : <FontAwesomeIcon icon="times" className="credential-counterfeit" />}</td>
 
               </tr>
             })}
