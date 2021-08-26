@@ -3,7 +3,7 @@ import moment from 'moment';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faCheckSquare, faCoffee, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
-
+import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -13,7 +13,7 @@ var QRCode = require('qrcode.react');
 
 
 async function getSharedVCPS() {
-  const response = await fetch("/api/v1/verifiable_credentials")
+  const response = await fetch("http://localhost/api/v1/verifiable_credentials")
   return await response.json()
 }
 
@@ -44,6 +44,11 @@ function getModeParams(mode) {
       url: "https://wallet.trackback.dev?r=https://trackback-verifier.trackback.dev/api/v1/vcp/trackbackLicenceRequest"
     }
   }
+} 
+
+const ImageValidate = ({ image }) => {
+
+  return <img src={image} alt="" width="100" height="100" />
 }
 
 function App() {
@@ -91,9 +96,9 @@ function App() {
               <th>Claim</th>
               <th>Verified</th>
             </tr>
-            {(data.vcps || []).map(({ vcs, datetime, vcpVerified }) => {
+            {(data.vcps || []).map(({ vcs, datetime, vcpVerified }, i) => {
 
-              return <tr>
+              return <tr key={i}>
                 <td className="datetime">
                   {moment((datetime)).format('MMMM Do YYYY, h:mm:ss a')}</td>
                 <td>
@@ -103,15 +108,18 @@ function App() {
                       const { id, valid, type, ...other } = vc
                       const keys = Object.keys(other);
 
+                      const name = keys[0] === "imageUri" ? "Photo" : keys[0];
+                      const value = other[keys[0]]
+
 
                       return (
-                        <tr>
+                        <tr key={name}>
                           <td className="credential-key">
-                            {camelCaseToLetter(keys[0])}
+                            {camelCaseToLetter(name)}
                           </td>
                           <td className="credential-value ">
 
-                            {other[keys[0]]}
+                            {keys[0] === 'imageUri' ? <ImageValidate image={value} /> : value}
                           </td>
                         </tr>
                       )

@@ -1,12 +1,13 @@
 const express = require('express');
 const { ApiPromise, WsProvider } = require('@polkadot/api');
 const fs = require('fs');
-
+const blake2AsHex = require('@polkadot/util-crypto');
 const { Buffer } = require('buffer');
 const { createPublicKey, createHash } = require('crypto');
 const { compactVerify } = require('jose/jws/compact/verify')
 
 const cors = require('cors');
+const { imageHash } = require('image-hash');
 
 const app = express();
 const port = process.env.PORT || 80;
@@ -97,12 +98,25 @@ async function verifyVC(api, vc) {
 
 }
 
+async function calImgHash(imageUri) {
+    console.log('image hash')
+    return new Promise((resolve, reject) => {
+        imageHash(imageUri, 16, true, (error, data) => {
+            if (error) throw error;
+            resolve(data);
+        });
+    })
+
+}
+
 async function validateVerifiableCredential(api, vcs = []) {
     return Promise.all(vcs.map(async (vc) => {
         const valid = await verifyVC(api, vc);
 
         if (vc.type.includes("DigitalDriverLicenceCredential")) {
             return { ...vc.credentialSubject, valid, type: "DigitalDriverLicenceCredential" }
+        } else if (vc.type.includes("DigitalDriverLicenceCredentialTrackback")) {
+            return { ...vc.credentialSubject, valid, type: "DigitalDriverLicenceCredentialTrackback" }
         } else {
             return { ...vc.credentialSubject.passport.traveller, valid, type: "DigitalPassportCredential" }
         }
@@ -129,6 +143,8 @@ app.post('/api/v1/vcp', async (rq, res) => {
     try {
 
         const vcp = rq.body.vcp;
+
+        console.log('VCP: ', JSON.stringify(vcp))
 
         const provider = new WsProvider("wss://trackback.dev");
         // const provider = new WsProvider("ws://127.0.0.1:9944");
@@ -174,7 +190,17 @@ app.post('/api/v1/vcp', async (rq, res) => {
 
         const validatedVCS = await validateVerifiableCredential(api, vcs);
 
-        console.log('VCP: ', JSON.stringify(vcp))
+        const hasImagUri = validatedVCS.find(a => a.type === "DigitalDriverLicenceCredentialTrackback" && !!a.imageUri);
+
+        if (hasImagUri) {
+            const hash = await calImgHash(hasImagUri.imageUri)
+            validatedVCS.push({
+                calculatedImageHash: hash,
+                valid: true,
+                type: "DigitalDriverLicenceCredentialTrackback"
+            })
+        }
+
 
         console.log('VCP VERIFIED: ', vcpVerified)
         console.log('VC RESULT: ', JSON.stringify(validatedVCS))
@@ -202,7 +228,7 @@ app.get('/api/v1/vcp/licenceRequest', (req, res) => {
 
     return res.json({
         schema: JSON.parse(fs.readFileSync('./resources/licence.schema.json')),
-        publishUrl: "https://trackback-ta.trackback.dev/api/v1/vcp" ,
+        publishUrl: "https://trackback-ta.trackback.dev/api/v1/vcp",
     })
 });
 
@@ -222,7 +248,7 @@ app.get('/api/v1/vcp/trackbackLicenceRequest', (req, res) => {
     });
 })
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Demo verifier service running on port ${port}`);
 });
 
@@ -230,7 +256,7 @@ console.log('SERVER STARTING');
 
 process.on('uncaughtException', function (exception) {
     console.log(exception);
-    process.exit(1);
+
 });
 
 process.on('SIGTERM', () => {

@@ -68,3 +68,6 @@ remotedeploy: ecr-login build
 	ssh -i ~/.ssh/ec2_key.pem ubuntu@$(IP_WEB_DIA) -t 'cd track-back-verifier && make redeploy-dia'
 	ssh -i ~/.ssh/ec2_key.pem ubuntu@$(IP_WEB_TA) -t 'cd track-back-verifier && make redeploy-ta'
 	ssh -i ~/.ssh/ec2_key.pem ubuntu@$(IP_WEB_TAV) -t 'cd track-back-verifier && make redeploy-tav'
+
+remotedeploy-tav: ecr-login build
+	ssh -i ~/.ssh/ec2_key.pem ubuntu@$(IP_WEB_TAV) -t 'cd track-back-verifier && make redeploy-tav'
