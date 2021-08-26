@@ -99,7 +99,7 @@ async function verifyVC(api, vc) {
 }
 
 async function calImgHash(imageUri) {
-    console.log('image hash')
+
     return new Promise((resolve, reject) => {
         imageHash(imageUri, 16, true, (error, data) => {
             if (error) throw error;
