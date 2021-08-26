@@ -20,5 +20,5 @@ variable "cloud_watch_name" {
 
 variable "verifiers" {
   type    = list(string)
-  default = [ "trackback-dia", "trackback-ta" ]
+  default = [ "trackback-dia", "trackback-ta", "trackback-verifier" ]
 }

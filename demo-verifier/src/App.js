@@ -3,12 +3,12 @@ import moment from 'moment';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faCheckSquare, faCoffee, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
-
+import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import './App.css';
-library.add(fab, faCheckSquare, faCoffee ,faCheck, faTimes)
+library.add(fab, faCheckSquare, faCoffee, faCheck, faTimes)
 var QRCode = require('qrcode.react');
 
 
@@ -22,8 +22,9 @@ function camelCaseToLetter(text) {
   return result.charAt(0).toUpperCase() + result.slice(1);
 }
 
-const MODE_DIA = "MODE_DIA"
-const MODE_TRACKBACK = "MODE_TRACKBACK"
+const MODE_DIA = "trackback-dia.trackback.dev"
+const MODE_TA = "trackback-ta.trackback.dev"
+const MODE_TRACKBACK = "trackback-verifier.trackback.dev"
 
 
 function getModeParams(mode) {
@@ -32,19 +33,29 @@ function getModeParams(mode) {
       title: "Trackback DIA™",
       url: "https://wallet.trackback.dev?r=https://trackback-dia.trackback.dev/api/v1/vcp/passportRequest"
     }
-  } else {
+  } else if (mode === MODE_TA) {
     return {
       title: "Trackback Transport Authority™",
       url: "https://wallet.trackback.dev?r=https://trackback-ta.trackback.dev/api/v1/vcp/licenceRequest"
     }
+  } else {
+    return {
+      title: "Trackback License Authority™",
+      url: "https://wallet.trackback.dev?r=https://trackback-verifier.trackback.dev/api/v1/vcp/trackbackLicenceRequest"
+    }
   }
+} 
+
+const ImageValidate = ({ image }) => {
+
+  return <img src={image} alt="" width="100" height="100" />
 }
 
 function App() {
 
   const [data, setData] = useState([])
 
-  const MODE = window.location.host.indexOf("dia") > 0 ? MODE_DIA : MODE_TRACKBACK
+  const MODE = window.location.host;
 
   const params = getModeParams(MODE);
 
@@ -85,9 +96,9 @@ function App() {
               <th>Claim</th>
               <th>Verified</th>
             </tr>
-            {(data.vcps || []).map(({ vcs, datetime, vcpVerified }) => {
+            {(data.vcps || []).map(({ vcs, datetime, vcpVerified }, i) => {
 
-              return <tr>
+              return <tr key={i}>
                 <td className="datetime">
                   {moment((datetime)).format('MMMM Do YYYY, h:mm:ss a')}</td>
                 <td>
@@ -97,14 +108,18 @@ function App() {
                       const { id, valid, type, ...other } = vc
                       const keys = Object.keys(other);
 
+                      const name = keys[0] === "imageUri" ? "Photo" : keys[0];
+                      const value = other[keys[0]]
+
+
                       return (
-                        <tr>
+                        <tr key={name}>
                           <td className="credential-key">
-                          {camelCaseToLetter(keys[0])}
+                            {camelCaseToLetter(name)}
                           </td>
                           <td className="credential-value ">
-                          
-                          {other[keys[0]]}
+
+                            {keys[0] === 'imageUri' ? <ImageValidate image={value} /> : value}
                           </td>
                         </tr>
                       )
@@ -112,8 +127,8 @@ function App() {
                   </table>
                 </td>
 
-                
-                <td>{vcpVerified ? <FontAwesomeIcon icon="check"  className="credential-verified"/>: <FontAwesomeIcon icon="times"  className="credential-counterfeit"/>}</td>
+
+                <td>{vcpVerified ? <FontAwesomeIcon icon="check" className="credential-verified" /> : <FontAwesomeIcon icon="times" className="credential-counterfeit" />}</td>
 
               </tr>
             })}

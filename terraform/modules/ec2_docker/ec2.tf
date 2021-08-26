@@ -5,6 +5,10 @@ data "aws_lb_target_group" "data_aws_alb_tg_verifier_dia" {
   arn = "arn:aws:elasticloadbalancing:ap-southeast-2:533545012068:targetgroup/Verifier-DIA/a639763c33d9b14f"
 }
 
+data "aws_lb_target_group" "data_aws_alb_tg_verifier_tav" {
+  arn = "arn:aws:elasticloadbalancing:ap-southeast-2:533545012068:targetgroup/Verifier-Trackback/473103ca42f2f414"
+}
+
 resource "aws_security_group" "aws_sg_verifier_demo" {
   name = "security_group for aws_sg_verifier_demo"
 
@@ -36,7 +40,7 @@ resource "aws_security_group" "aws_sg_verifier_demo" {
 
 
 resource "aws_instance" "verifier_web" {
-  count = 2
+  count = 3
 
   ami                         = "ami-0567f647e75c7bc05"
   instance_type               = "t3.medium"
@@ -104,6 +108,12 @@ resource "aws_lb_target_group_attachment" "aws_tg_attach_verifier_ta" {
   port             = 80
 }
 
+resource "aws_lb_target_group_attachment" "aws_tg_attach_verifier_tav" {
+  target_group_arn = data.aws_lb_target_group.data_aws_alb_tg_verifier_tav.arn
+  target_id        = aws_instance.verifier_web[2].id
+  port             = 80
+}
+
 
 output "verifier_dia_ip" {
   value = aws_instance.verifier_web[0].public_ip
@@ -111,4 +121,8 @@ output "verifier_dia_ip" {
 
 output "verifier_ta_ip" {
   value = aws_instance.verifier_web[1].public_ip
+}
+
+output "verifier_tav_ip" {
+  value = aws_instance.verifier_web[2].public_ip
 }
