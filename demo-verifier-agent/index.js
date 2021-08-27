@@ -211,7 +211,7 @@ app.post('/api/v1/vcp', async (rq, res) => {
 
         console.log('VC VERIFIED:', vcsVerified)
 
-        vcpsReceived.push({ vcs: validatedVCS, datetime: new Date(), vcpVerified: vcpVerified });
+        vcpsReceived.push({ vcs: validatedVCS, datetime: new Date(), verfied: (vcpVerified && vcsVerified) });
 
         res.json({ result: { vc: validatedVCS, verfied: (vcpVerified && vcsVerified) } })
 
