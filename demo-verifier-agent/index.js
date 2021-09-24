@@ -147,7 +147,6 @@ app.post('/api/v1/vcp', async (rq, res) => {
         console.log('VCP: ', JSON.stringify(vcp))
 
         const provider = new WsProvider("wss://trackback.dev");
-        // const provider = new WsProvider("ws://127.0.0.1:9944");
 
         const types = {
             "VerifiableCredential": {
@@ -184,7 +183,7 @@ app.post('/api/v1/vcp', async (rq, res) => {
 
         const api = await ApiPromise.create({ provider: provider, types, rpc });
 
-        const vcpVerified = await vcpVerfy(vcp);
+        const vcpVerified = vcpVerfy(vcp);
 
         const vcs = vcp["verifiableCredential"];
 
@@ -200,6 +199,10 @@ app.post('/api/v1/vcp', async (rq, res) => {
                 type: "DigitalDriverLicenceCredentialTrackback"
             })
         }
+
+        await api.disconnect().catch((error) => {
+            console.log(error)
+        });
 
 
         console.log('VCP VERIFIED: ', vcpVerified)
